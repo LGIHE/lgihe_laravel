@@ -103,6 +103,10 @@ Comprehensive documentation has been created:
 ## Testing the API
 
 ### Quick Test
+```bash
+/opt/cpanel/ea-php84/root/usr/bin/php $(which composer) install
+```
+
 
 ```bash
 # Test public endpoint
