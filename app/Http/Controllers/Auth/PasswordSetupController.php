@@ -98,8 +98,12 @@ class PasswordSetupController extends Controller
             return redirect()->route('password.setup.form');
         }
 
+        $user = Auth::user();
+        $canAccessPanel = $user->canAccessPanel(\Filament\Facades\Filament::getCurrentPanel());
+
         return view('auth.password-setup-success', [
-            'user' => Auth::user()
+            'user' => $user,
+            'canAccessPanel' => $canAccessPanel
         ]);
     }
 }

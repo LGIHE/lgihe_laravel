@@ -32,7 +32,10 @@ MAIL_FROM_NAME="LGIHE Backend"
 
 2. Go to admin panel: `http://localhost:8001/admin`
 
-3. Create a new user (leave password empty)
+3. Create a new user:
+   - Fill in name and email
+   - **Important:** Assign at least one role (e.g., "Viewer")
+   - Leave password empty
 
 4. Check `storage/logs/laravel.log` for the email
 
@@ -51,13 +54,18 @@ MAIL_FROM_NAME="LGIHE Backend"
 
 2. Go to admin panel: `http://localhost:8001/admin`
 
-3. Create a new user with YOUR email address (leave password empty)
+3. Create a new user with YOUR email address:
+   - Fill in name and your email
+   - **Important:** Assign at least one role (e.g., "Viewer")
+   - Leave password empty
 
 4. Check your inbox for the email
 
 5. Click the link and set your password
 
 6. Verify you're logged in!
+
+**⚠️ Important:** Always assign at least one role when creating users. Without a role, users can set their password but won't be able to access the admin panel (403 error). See `docs/USER_ROLES_PERMISSIONS.md` for details.
 
 ## ✅ That's It!
 
@@ -120,22 +128,37 @@ Before deploying to production:
 - Tokens expire after 60 minutes
 - Admin can resend by editing and saving the user
 
-### Can't Access Admin Panel After Setup?
-- Check user has proper roles assigned
-- Verify user has permissions in Filament
+### Can't Access Admin Panel After Setup (403 Error)?
+**Problem:** User sets password successfully but gets 403 Forbidden error.
+
+**Solution:**
+- User needs at least one role assigned
+- Edit the user in admin panel
+- Assign a role (e.g., "Viewer", "Editor", "Admin")
+- User can now access the admin panel
+- See `docs/USER_ROLES_PERMISSIONS.md` for full details
+
+### Queue Worker Questions?
+- **Development:** Use `QUEUE_CONNECTION=sync` (no worker needed)
+- **Production:** Use `QUEUE_CONNECTION=database` with Supervisor
+- See `docs/QUEUE_SETUP.md` for complete guide
 
 ## 📚 Full Documentation
 
 - **Complete Guide**: `docs/RESEND_INTEGRATION.md`
 - **Implementation Details**: `docs/RESEND_IMPLEMENTATION_COMPLETE.md`
 - **Setup Checklist**: `docs/RESEND_CHECKLIST.md`
+- **Queue Setup**: `docs/QUEUE_SETUP.md` 🔄
+- **User Roles & Permissions**: `docs/USER_ROLES_PERMISSIONS.md` 🔐
 
 ## 💡 Tips
 
-- Use `MAIL_MAILER=log` for local development
-- Use `QUEUE_CONNECTION=sync` for simple testing
-- Customize views to match your branding
-- Monitor email delivery in Resend dashboard
+- ✅ **Always assign roles** when creating users (prevents 403 errors)
+- ✅ Use `MAIL_MAILER=log` for local development
+- ✅ Use `QUEUE_CONNECTION=sync` for simple testing (no worker needed)
+- ✅ Customize views to match your branding
+- ✅ Monitor email delivery in Resend dashboard
+- ✅ See `docs/QUEUE_SETUP.md` for production queue configuration
 
 ---
 

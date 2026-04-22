@@ -33,15 +33,27 @@ class CreateUser extends CreateRecord
      */
     protected function afterCreate(): void
     {
+        // Check if user has at least one role assigned
+        $hasRoles = $this->record->roles()->count() > 0;
+        
         // Send password setup email to the newly created user
         try {
             $this->record->notify(new UserCreatedNotification());
             
-            Notification::make()
+            $notification = Notification::make()
                 ->title('User created successfully')
                 ->body('A password setup email has been sent to ' . $this->record->email)
-                ->success()
-                ->send();
+                ->success();
+            
+            // Warn if no roles assigned
+            if (!$hasRoles) {
+                $notification
+                    ->title('User created with warning')
+                    ->body('Password setup email sent to ' . $this->record->email . '. Note: User has no roles assigned and may not be able to access the admin panel.')
+                    ->warning();
+            }
+            
+            $notification->send();
         } catch (\Exception $e) {
             Notification::make()
                 ->title('User created but email failed')

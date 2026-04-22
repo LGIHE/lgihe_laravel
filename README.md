@@ -200,6 +200,8 @@ lgihe-backend-filament/
 - **Resend Quick Start**: `RESEND_QUICK_START.md` ⚡
 - **Resend Integration Guide**: `docs/RESEND_INTEGRATION.md`
 - **Resend Setup Checklist**: `docs/RESEND_CHECKLIST.md`
+- **Queue Setup Guide**: `docs/QUEUE_SETUP.md` 🔄
+- **User Roles & Permissions**: `docs/USER_ROLES_PERMISSIONS.md` 🔐
 - **Filament Docs**: https://filamentphp.com/docs/3.x
 - **Laravel Docs**: https://laravel.com/docs/11.x
 
