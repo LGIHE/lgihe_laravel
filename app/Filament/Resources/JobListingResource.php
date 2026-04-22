@@ -112,9 +112,14 @@ class JobListingResource extends Resource
                             ->directory('job-documents')
                             ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
                             ->maxSize(10240) // 10MB
+                            ->maxFiles(1) // Only allow single file
                             ->downloadable()
+                            ->openable()
                             ->previewable(false)
-                            ->helperText('Upload PDF or Word document (max 10MB)'),
+                            ->helperText('Upload PDF or Word document (max 10MB)')
+                            ->visibility('public')
+                            ->dehydrateStateUsing(fn ($state) => is_array($state) ? ($state[0] ?? null) : $state)
+                            ->afterStateHydrated(fn ($component, $state) => $component->state($state ? [$state] : [])),
                         Forms\Components\Hidden::make('document_name'),
                         Forms\Components\Hidden::make('document_size'),
                         Forms\Components\Hidden::make('document_type'),
