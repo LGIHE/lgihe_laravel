@@ -7,11 +7,15 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class UserProfile extends Page
+class UserProfile extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
     protected static string $view = 'filament.pages.user-profile';
@@ -38,9 +42,11 @@ class UserProfile extends Page
             'password' => '',
             'password_confirmation' => '',
         ];
+
+        $this->form->fill($this->profileData);
     }
 
-    public function profileForm(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -53,12 +59,21 @@ class UserProfile extends Page
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required()
-                            ->unique('users', 'email', auth()->id())
+                            ->unique('users', 'email', fn () => auth()->user())
                             ->maxLength(255),
                     ])
                     ->columns(2),
             ])
-            ->statePath('profileData');
+            ->statePath('profileData')
+            ->model(auth()->user());
+    }
+
+    protected function getForms(): array
+    {
+        return [
+            'form',
+            'passwordForm',
+        ];
     }
 
     public function passwordForm(Form $form): Form
@@ -71,14 +86,12 @@ class UserProfile extends Page
                         Forms\Components\TextInput::make('current_password')
                             ->label('Current Password')
                             ->password()
-                            ->required()
-                            ->currentPassword(),
+                            ->required(),
                         Forms\Components\TextInput::make('password')
                             ->label('New Password')
                             ->password()
                             ->required()
                             ->rule(Password::default())
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->live(debounce: 500)
                             ->same('password_confirmation'),
                         Forms\Components\TextInput::make('password_confirmation')
@@ -92,23 +105,9 @@ class UserProfile extends Page
             ->statePath('passwordData');
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('updateProfile')
-                ->label('Update Profile')
-                ->color('primary')
-                ->action('updateProfile'),
-            Action::make('updatePassword')
-                ->label('Update Password')
-                ->color('warning')
-                ->action('updatePassword'),
-        ];
-    }
-
     public function updateProfile(): void
     {
-        $data = $this->profileForm->getState();
+        $data = $this->form->getState();
 
         auth()->user()->update([
             'name' => $data['name'],
@@ -119,6 +118,12 @@ class UserProfile extends Page
             ->title('Profile updated successfully')
             ->success()
             ->send();
+
+        // Refresh the form with updated data
+        $this->form->fill([
+            'name' => auth()->user()->name,
+            'email' => auth()->user()->email,
+        ]);
     }
 
     public function updatePassword(): void
@@ -139,11 +144,11 @@ class UserProfile extends Page
         ]);
 
         // Clear password fields
-        $this->passwordData = [
+        $this->passwordForm->fill([
             'current_password' => '',
             'password' => '',
             'password_confirmation' => '',
-        ];
+        ]);
 
         Notification::make()
             ->title('Password updated successfully')

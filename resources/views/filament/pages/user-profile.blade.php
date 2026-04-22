@@ -12,7 +12,7 @@
             </div>
             <div class="px-6 py-4">
                 <form wire:submit="updateProfile">
-                    {{ $this->profileForm }}
+                    {{ $this->form }}
                     
                     <div class="mt-6">
                         <x-filament::button type="submit" color="primary">
