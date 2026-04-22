@@ -117,23 +117,27 @@ class JobListingResource extends Resource
                             ->helperText('Upload PDF or Word document (max 10MB)')
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if ($state) {
-                                    // Get file info
-                                    $file = $state;
-                                    if (is_string($file)) {
-                                        // File already uploaded, get info from storage
-                                        $fullPath = storage_path('app/public/' . $file);
+                                    // Handle single file upload - $state should be a string (file path)
+                                    if (is_string($state)) {
+                                        // File path from storage
+                                        $fullPath = storage_path('app/public/' . $state);
                                         if (file_exists($fullPath)) {
-                                            $set('document_name', basename($file));
+                                            $set('document_name', basename($state));
                                             $set('document_size', filesize($fullPath));
                                             $set('document_type', mime_content_type($fullPath));
                                         }
-                                    } elseif (is_object($file) && method_exists($file, 'getClientOriginalName')) {
-                                        // New file upload
-                                        $set('document_name', $file->getClientOriginalName());
-                                        $set('document_size', $file->getSize());
-                                        $set('document_type', $file->getMimeType());
+                                    } elseif (is_array($state) && !empty($state)) {
+                                        // Handle array case (though we expect single file)
+                                        $filePath = $state[0];
+                                        $fullPath = storage_path('app/public/' . $filePath);
+                                        if (file_exists($fullPath)) {
+                                            $set('document_name', basename($filePath));
+                                            $set('document_size', filesize($fullPath));
+                                            $set('document_type', mime_content_type($fullPath));
+                                        }
                                     }
                                 } else {
+                                    // Clear document info when file is removed
                                     $set('document_name', null);
                                     $set('document_size', null);
                                     $set('document_type', null);
