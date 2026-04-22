@@ -51,6 +51,20 @@ class JobListingResource extends Resource
                                 'redo',
                             ])
                             ->placeholder('Provide a detailed description of the position'),
+                        Forms\Components\RichEditor::make('purpose_of_role')
+                            ->label('Purpose of the Role')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'bulletList',
+                                'orderedList',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Describe the purpose and objectives of this role'),
                         Forms\Components\RichEditor::make('requirements')
                             ->columnSpanFull()
                             ->toolbarButtons([
@@ -62,6 +76,32 @@ class JobListingResource extends Resource
                                 'redo',
                             ])
                             ->placeholder('List the required qualifications and skills'),
+                        Forms\Components\RichEditor::make('application_requirements')
+                            ->label('Application Requirements')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'bulletList',
+                                'orderedList',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Specify what applicants need to submit'),
+                        Forms\Components\RichEditor::make('application_process')
+                            ->label('Application Process')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'bulletList',
+                                'orderedList',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Explain how to apply for this position'),
                         Forms\Components\RichEditor::make('responsibilities')
                             ->columnSpanFull()
                             ->toolbarButtons([
@@ -73,6 +113,29 @@ class JobListingResource extends Resource
                                 'redo',
                             ])
                             ->placeholder('Describe the key responsibilities'),
+                        Forms\Components\RichEditor::make('core_competencies')
+                            ->label('Core Competencies')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'bulletList',
+                                'orderedList',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('List the core competencies required for this role'),
+                        Forms\Components\RichEditor::make('disclaimer')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Add any disclaimers or additional information'),
                     ])
                     ->columns(2),
                 

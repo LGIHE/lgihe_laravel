@@ -72,6 +72,9 @@ class JobListingFilamentTest extends TestCase
 
     public function test_job_listing_with_document_can_be_created()
     {
+        // Temporarily unregister the observer for this test
+        JobListing::unsetEventDispatcher();
+        
         $file = UploadedFile::fake()->create('job-description.pdf', 1024, 'application/pdf');
         $filePath = $file->store('job-documents', 'public');
 
@@ -82,8 +85,8 @@ class JobListingFilamentTest extends TestCase
             'status' => 'draft',
             'document_path' => $filePath,
             'document_name' => 'job-description.pdf',
-            'document_type' => 'application/pdf',
             'document_size' => 1024,
+            'document_type' => 'application/pdf',
             'created_by' => $this->user->id,
             'updated_by' => $this->user->id,
         ];
@@ -92,6 +95,7 @@ class JobListingFilamentTest extends TestCase
 
         $this->assertTrue($job->hasDocument());
         $this->assertEquals('job-description.pdf', $job->document_name);
+        $this->assertEquals(1024, $job->document_size);
         $this->assertEquals('1 KB', $job->formatted_file_size);
         
         Storage::disk('public')->assertExists($filePath);

@@ -23,8 +23,13 @@ class JobListingFactory extends Factory
             'title' => $title,
             'slug' => \Illuminate\Support\Str::slug($title),
             'description' => fake()->paragraphs(3, true),
+            'purpose_of_role' => fake()->paragraphs(2, true),
             'requirements' => fake()->paragraphs(2, true),
+            'application_requirements' => fake()->paragraphs(2, true),
+            'application_process' => fake()->paragraphs(2, true),
             'responsibilities' => fake()->paragraphs(2, true),
+            'core_competencies' => fake()->paragraphs(2, true),
+            'disclaimer' => fake()->paragraph(),
             'location' => fake()->city() . ', ' . fake()->country(),
             'department' => fake()->randomElement([
                 'Computer Science Department',
