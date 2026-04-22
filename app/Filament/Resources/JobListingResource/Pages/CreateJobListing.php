@@ -18,6 +18,18 @@ class CreateJobListing extends CreateRecord
             $data['published_at'] = now();
         }
         
+        // Handle document metadata
+        if (!empty($data['document_path'])) {
+            $filePath = $data['document_path'];
+            $fullPath = storage_path('app/public/' . $filePath);
+            
+            if (file_exists($fullPath)) {
+                $data['document_name'] = basename($filePath);
+                $data['document_size'] = filesize($fullPath);
+                $data['document_type'] = mime_content_type($fullPath);
+            }
+        }
+        
         return $data;
     }
 
