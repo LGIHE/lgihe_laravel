@@ -22,6 +22,13 @@ class EditJobListing extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         // Handle document metadata
+        $data = $this->handleDocumentMetadata($data);
+        
+        return $data;
+    }
+
+    protected function handleDocumentMetadata(array $data): array
+    {
         if (!empty($data['document_path'])) {
             $filePath = $data['document_path'];
             $fullPath = storage_path('app/public/' . $filePath);

@@ -111,6 +111,12 @@ class JobListing extends Model
         }
 
         $bytes = $this->document_size;
+        
+        // Handle zero or very small files
+        if ($bytes == 0) {
+            return '0 B';
+        }
+        
         $units = ['B', 'KB', 'MB', 'GB'];
         
         for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {

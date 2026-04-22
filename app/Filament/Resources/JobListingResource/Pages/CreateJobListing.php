@@ -19,16 +19,7 @@ class CreateJobListing extends CreateRecord
         }
         
         // Handle document metadata
-        if (!empty($data['document_path'])) {
-            $filePath = $data['document_path'];
-            $fullPath = storage_path('app/public/' . $filePath);
-            
-            if (file_exists($fullPath)) {
-                $data['document_name'] = basename($filePath);
-                $data['document_size'] = filesize($fullPath);
-                $data['document_type'] = mime_content_type($fullPath);
-            }
-        }
+        $data = $this->handleDocumentMetadata($data);
         
         return $data;
     }
@@ -56,6 +47,9 @@ class CreateJobListing extends CreateRecord
                     $data['status'] = 'draft';
                     $data['published_at'] = null;
                     
+                    // Handle document metadata
+                    $data = $this->handleDocumentMetadata($data);
+                    
                     $this->data = $data;
                     $this->create();
                 }),
@@ -73,9 +67,28 @@ class CreateJobListing extends CreateRecord
                     $data['status'] = 'active';
                     $data['published_at'] = now();
                     
+                    // Handle document metadata
+                    $data = $this->handleDocumentMetadata($data);
+                    
                     $this->data = $data;
                     $this->create();
                 }),
         ];
+    }
+
+    protected function handleDocumentMetadata(array $data): array
+    {
+        if (!empty($data['document_path'])) {
+            $filePath = $data['document_path'];
+            $fullPath = storage_path('app/public/' . $filePath);
+            
+            if (file_exists($fullPath)) {
+                $data['document_name'] = basename($filePath);
+                $data['document_size'] = filesize($fullPath);
+                $data['document_type'] = mime_content_type($fullPath);
+            }
+        }
+        
+        return $data;
     }
 }
