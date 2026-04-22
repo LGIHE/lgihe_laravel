@@ -51,6 +51,25 @@ class JobListing extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($jobListing) {
+            // If status is active and no published_at is set, set it to now
+            if ($jobListing->status === 'active' && empty($jobListing->published_at)) {
+                $jobListing->published_at = now();
+            }
+        });
+
+        static::updating(function ($jobListing) {
+            // If status is changed to active and no published_at is set, set it to now
+            if ($jobListing->status === 'active' && empty($jobListing->published_at)) {
+                $jobListing->published_at = now();
+            }
+        });
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', 'active')

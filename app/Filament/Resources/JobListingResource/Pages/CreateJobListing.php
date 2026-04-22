@@ -39,10 +39,13 @@ class CreateJobListing extends CreateRecord
         return [
             $this->getCreateFormAction()
                 ->label('Save as Draft')
-                ->action(function (array $data) {
+                ->action(function () {
+                    $data = $this->form->getState();
                     $data['status'] = 'draft';
                     $data['published_at'] = null;
-                    $this->create($data);
+                    
+                    $this->data = $data;
+                    $this->create();
                 }),
             
             Actions\Action::make('publish')
@@ -53,10 +56,13 @@ class CreateJobListing extends CreateRecord
                 ->modalHeading('Publish Job Listing')
                 ->modalDescription('Are you sure you want to publish this job listing? It will be immediately visible and accepting applications.')
                 ->modalSubmitActionLabel('Yes, Publish')
-                ->action(function (array $data) {
+                ->action(function () {
+                    $data = $this->form->getState();
                     $data['status'] = 'active';
                     $data['published_at'] = now();
-                    $this->create($data);
+                    
+                    $this->data = $data;
+                    $this->create();
                 }),
         ];
     }
