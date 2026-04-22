@@ -17,7 +17,11 @@ class NewsResource extends Resource
 {
     protected static ?string $model = News::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-newspaper';
+
+    protected static ?string $navigationGroup = 'Content Management';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -174,5 +178,25 @@ class NewsResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_news');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_news');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('update_news');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete_news');
     }
 }

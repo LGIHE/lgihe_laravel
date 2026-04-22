@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\ApplicationController;
 use App\Http\Controllers\Api\V1\AnalyticsController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\Admin\NewsAdminController;
 use App\Http\Controllers\Api\V1\Admin\ApplicationAdminController;
 use App\Http\Controllers\Api\V1\Admin\ContactInquiryAdminController;
@@ -47,6 +48,12 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout']);
         Route::get('auth/me', [AuthController::class, 'me']);
+        
+        // Profile management
+        Route::get('profile', [App\Http\Controllers\Api\V1\ProfileController::class, 'show']);
+        Route::put('profile', [App\Http\Controllers\Api\V1\ProfileController::class, 'update']);
+        Route::post('profile/change-password', [App\Http\Controllers\Api\V1\ProfileController::class, 'changePassword']);
+        Route::delete('profile', [App\Http\Controllers\Api\V1\ProfileController::class, 'destroy']);
     });
     
     // Admin endpoints (protected by Sanctum)

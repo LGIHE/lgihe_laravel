@@ -17,7 +17,11 @@ class ContactInquiryResource extends Resource
 {
     protected static ?string $model = ContactInquiry::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-envelope';
+
+    protected static ?string $navigationGroup = 'Communications';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -117,5 +121,25 @@ class ContactInquiryResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_contact_inquiries');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_contact_inquiries');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('update_contact_inquiries');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete_contact_inquiries');
     }
 }

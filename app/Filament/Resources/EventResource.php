@@ -17,7 +17,11 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+
+    protected static ?string $navigationGroup = 'Content Management';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -203,5 +207,25 @@ class EventResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_events');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_events');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('update_events');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete_events');
     }
 }

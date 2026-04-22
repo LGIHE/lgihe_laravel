@@ -17,7 +17,11 @@ class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Admissions';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -199,5 +203,25 @@ class ApplicationResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can('view_applications');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->can('create_applications');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->can('update_applications');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->can('delete_applications');
     }
 }
