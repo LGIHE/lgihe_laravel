@@ -23,29 +23,96 @@ class JobListingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
-                Forms\Components\TextInput::make('slug')
-                    ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('requirements')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('responsibilities')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('location'),
-                Forms\Components\TextInput::make('employment_type'),
-                Forms\Components\TextInput::make('salary_range'),
-                Forms\Components\DatePicker::make('application_deadline'),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('published_at'),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('updated_by')
-                    ->numeric(),
+                Forms\Components\Section::make('Job Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state)))
+                            ->placeholder('e.g., Senior Lecturer - Computer Science'),
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\RichEditor::make('description')
+                            ->required()
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'bulletList',
+                                'orderedList',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Provide a detailed description of the position'),
+                        Forms\Components\RichEditor::make('requirements')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'bulletList',
+                                'orderedList',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('List the required qualifications and skills'),
+                        Forms\Components\RichEditor::make('responsibilities')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'bulletList',
+                                'orderedList',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Describe the key responsibilities'),
+                    ])
+                    ->columns(2),
+                
+                Forms\Components\Section::make('Job Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('location')
+                            ->placeholder('e.g., Kampala, Uganda'),
+                        Forms\Components\Select::make('employment_type')
+                            ->options([
+                                'full-time' => 'Full-time',
+                                'part-time' => 'Part-time',
+                                'contract' => 'Contract',
+                                'temporary' => 'Temporary',
+                            ])
+                            ->placeholder('Select employment type'),
+                        Forms\Components\TextInput::make('salary_range')
+                            ->placeholder('e.g., UGX 3,000,000 - 5,000,000'),
+                        Forms\Components\DatePicker::make('application_deadline')
+                            ->native(false)
+                            ->minDate(now()),
+                    ])
+                    ->columns(2),
+                
+                Forms\Components\Section::make('Publishing')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->required()
+                            ->options([
+                                'draft' => 'Draft',
+                                'active' => 'Active',
+                                'closed' => 'Closed',
+                                'archived' => 'Archived',
+                            ])
+                            ->default('draft')
+                            ->live(),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->native(false)
+                            ->visible(fn ($get) => $get('status') === 'active'),
+                        Forms\Components\Hidden::make('created_by')
+                            ->default(auth()->id()),
+                        Forms\Components\Hidden::make('updated_by')
+                            ->default(auth()->id()),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -67,6 +134,13 @@ class JobListingResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'active' => 'success',
+                        'closed' => 'warning',
+                        'archived' => 'danger',
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('published_at')
                     ->dateTime()

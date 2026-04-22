@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class AnalyticsError extends Model
 {
     protected $fillable = [
-        'session_id',
-        'error_type',
-        'error_message',
-        'stack_trace',
-        'page_url',
+        'message',
+        'stack',
+        'url',
         'user_agent',
-        'ip_address',
+        'severity',
+        'timestamp',
+    ];
+
+    protected $casts = [
+        'timestamp' => 'datetime',
     ];
 }

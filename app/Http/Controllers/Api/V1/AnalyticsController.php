@@ -14,12 +14,16 @@ class AnalyticsController extends Controller
     public function storeEvent(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'session_id' => 'required|string|max:255',
-            'event_type' => 'required|string|max:255',
-            'event_name' => 'nullable|string|max:255',
-            'event_data' => 'nullable|array',
-            'page_url' => 'required|string|max:500',
-            'referrer' => 'nullable|string|max:500',
+            'name' => 'required|string|max:255',
+            'properties' => 'nullable|array',
+            'timestamp' => 'required|date',
+            'sessionId' => 'nullable|string|max:255',
+            'userAgent' => 'nullable|string',
+            'referrer' => 'nullable|string',
+            'screenResolution' => 'nullable|string|max:50',
+            'country' => 'nullable|string|max:100',
+            'countryCode' => 'nullable|string|max:10',
+            'city' => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -30,44 +34,16 @@ class AnalyticsController extends Controller
         }
 
         AnalyticsEvent::create([
-            'session_id' => $request->session_id,
-            'event_type' => $request->event_type,
-            'event_name' => $request->event_name,
-            'event_data' => $request->event_data,
-            'page_url' => $request->page_url,
+            'name' => $request->name,
+            'properties' => $request->properties,
+            'session_id' => $request->sessionId,
+            'user_agent' => $request->userAgent,
             'referrer' => $request->referrer,
-            'user_agent' => $request->userAgent(),
-            'ip_address' => $request->ip(),
-        ]);
-
-        return response()->json(['success' => true], 201);
-    }
-
-    public function storeError(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'session_id' => 'required|string|max:255',
-            'error_type' => 'required|string|max:255',
-            'error_message' => 'required|string',
-            'stack_trace' => 'nullable|string',
-            'page_url' => 'required|string|max:500',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        AnalyticsError::create([
-            'session_id' => $request->session_id,
-            'error_type' => $request->error_type,
-            'error_message' => $request->error_message,
-            'stack_trace' => $request->stack_trace,
-            'page_url' => $request->page_url,
-            'user_agent' => $request->userAgent(),
-            'ip_address' => $request->ip(),
+            'screen_resolution' => $request->screenResolution,
+            'country' => $request->country,
+            'country_code' => $request->countryCode,
+            'city' => $request->city,
+            'timestamp' => $request->timestamp,
         ]);
 
         return response()->json(['success' => true], 201);
@@ -76,14 +52,14 @@ class AnalyticsController extends Controller
     public function storePageLoad(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'session_id' => 'required|string|max:255',
-            'page_url' => 'required|string|max:500',
-            'page_title' => 'nullable|string|max:255',
-            'referrer' => 'nullable|string|max:500',
-            'load_time' => 'nullable|integer',
-            'device_type' => 'nullable|string|max:50',
-            'browser' => 'nullable|string|max:100',
-            'os' => 'nullable|string|max:100',
+            'url' => 'required|string|max:500',
+            'loadTime' => 'required|integer',
+            'timestamp' => 'required|date',
+            'sessionId' => 'nullable|string|max:255',
+            'userAgent' => 'nullable|string',
+            'country' => 'nullable|string|max:100',
+            'countryCode' => 'nullable|string|max:10',
+            'city' => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -94,16 +70,44 @@ class AnalyticsController extends Controller
         }
 
         PageLoad::create([
-            'session_id' => $request->session_id,
-            'page_url' => $request->page_url,
-            'page_title' => $request->page_title,
-            'referrer' => $request->referrer,
-            'load_time' => $request->load_time,
-            'device_type' => $request->device_type,
-            'browser' => $request->browser,
-            'os' => $request->os,
-            'user_agent' => $request->userAgent(),
-            'ip_address' => $request->ip(),
+            'url' => $request->url,
+            'load_time' => $request->loadTime,
+            'session_id' => $request->sessionId,
+            'user_agent' => $request->userAgent,
+            'country' => $request->country,
+            'country_code' => $request->countryCode,
+            'city' => $request->city,
+            'timestamp' => $request->timestamp,
+        ]);
+
+        return response()->json(['success' => true], 201);
+    }
+
+    public function storeError(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'message' => 'required|string',
+            'stack' => 'nullable|string',
+            'url' => 'nullable|string',
+            'userAgent' => 'nullable|string',
+            'timestamp' => 'required|date',
+            'severity' => 'required|in:low,medium,high,critical',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        AnalyticsError::create([
+            'message' => $request->message,
+            'stack' => $request->stack,
+            'url' => $request->url,
+            'user_agent' => $request->userAgent,
+            'severity' => $request->severity,
+            'timestamp' => $request->timestamp,
         ]);
 
         return response()->json(['success' => true], 201);

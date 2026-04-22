@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class PageLoad extends Model
 {
     protected $fillable = [
-        'session_id',
-        'page_url',
-        'page_title',
-        'referrer',
+        'url',
         'load_time',
-        'device_type',
-        'browser',
-        'os',
+        'session_id',
         'user_agent',
-        'ip_address',
+        'country',
+        'country_code',
+        'city',
+        'timestamp',
+    ];
+
+    protected $casts = [
+        'timestamp' => 'datetime',
     ];
 }

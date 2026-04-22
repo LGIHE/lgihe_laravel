@@ -23,26 +23,76 @@ class NewsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
-                Forms\Components\TextInput::make('slug')
-                    ->required(),
-                Forms\Components\Textarea::make('excerpt')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('content')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('featured_image')
-                    ->image(),
-                Forms\Components\TextInput::make('category'),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('published_at'),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('updated_by')
-                    ->numeric(),
+                Forms\Components\Section::make('Article Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\RichEditor::make('excerpt')
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'link',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Brief summary of the article (optional)'),
+                        Forms\Components\RichEditor::make('content')
+                            ->required()
+                            ->columnSpanFull()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'bulletList',
+                                'orderedList',
+                                'h2',
+                                'h3',
+                                'link',
+                                'blockquote',
+                                'codeBlock',
+                                'undo',
+                                'redo',
+                            ]),
+                        Forms\Components\TextInput::make('category')
+                            ->placeholder('e.g., Announcement, Achievement, Research'),
+                    ])
+                    ->columns(2),
+                
+                Forms\Components\Section::make('Media')
+                    ->schema([
+                        Forms\Components\FileUpload::make('featured_image')
+                            ->image()
+                            ->imageEditor()
+                            ->directory('news'),
+                    ]),
+                
+                Forms\Components\Section::make('Publishing')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->required()
+                            ->options([
+                                'draft' => 'Draft',
+                                'published' => 'Published',
+                                'archived' => 'Archived',
+                            ])
+                            ->default('draft')
+                            ->live(),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->native(false)
+                            ->visible(fn ($get) => $get('status') === 'published'),
+                        Forms\Components\Hidden::make('created_by')
+                            ->default(auth()->id()),
+                        Forms\Components\Hidden::make('updated_by')
+                            ->default(auth()->id()),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -58,6 +108,12 @@ class NewsResource extends Resource
                 Tables\Columns\TextColumn::make('category')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'published' => 'success',
+                        'archived' => 'warning',
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('published_at')
                     ->dateTime()

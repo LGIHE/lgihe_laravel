@@ -7,17 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class AnalyticsEvent extends Model
 {
     protected $fillable = [
+        'name',
+        'properties',
         'session_id',
-        'event_type',
-        'event_name',
-        'event_data',
-        'page_url',
-        'referrer',
         'user_agent',
-        'ip_address',
+        'referrer',
+        'screen_resolution',
+        'country',
+        'country_code',
+        'city',
+        'timestamp',
     ];
 
     protected $casts = [
-        'event_data' => 'array',
+        'properties' => 'array',
+        'timestamp' => 'datetime',
     ];
 }
