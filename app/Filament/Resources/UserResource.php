@@ -53,12 +53,15 @@ class UserResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('password')
                             ->password()
-                            ->required(fn (string $context): bool => $context === 'create')
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
                             ->dehydrated(fn ($state) => filled($state))
                             ->revealable()
                             ->label('Password')
-                            ->helperText('Leave empty to keep current password when editing'),
+                            ->helperText(fn (string $context): string => 
+                                $context === 'create' 
+                                    ? 'Leave empty to send a password setup email to the user' 
+                                    : 'Leave empty to keep current password'
+                            ),
                         
                         Forms\Components\TextInput::make('password_confirmation')
                             ->password()
@@ -66,7 +69,8 @@ class UserResource extends Resource
                             ->revealable()
                             ->label('Confirm Password')
                             ->requiredWith('password')
-                            ->dehydrated(false),
+                            ->dehydrated(false)
+                            ->visible(fn (callable $get) => filled($get('password'))),
                     ])
                     ->columns(2),
 

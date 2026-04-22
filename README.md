@@ -44,6 +44,8 @@ php artisan serve --port=8001
 - ✅ Role-based access control
 - ✅ Password management
 - ✅ Activity tracking
+- ✅ Email notifications (Resend.com)
+- ✅ Automated password setup emails
 
 ### Filament Features
 - ✅ Global search
@@ -84,6 +86,9 @@ cp .env.example .env
 
 # Generate application key
 php artisan key:generate
+
+# Configure Resend (optional, for email)
+# Add RESEND_API_KEY to .env file
 
 # Run migrations
 php artisan migrate
@@ -192,6 +197,9 @@ lgihe-backend-filament/
 
 - **Setup Guide**: `SETUP_COMPLETE.md`
 - **Migration Comparison**: `MIGRATION_COMPARISON.md`
+- **Resend Quick Start**: `RESEND_QUICK_START.md` ⚡
+- **Resend Integration Guide**: `docs/RESEND_INTEGRATION.md`
+- **Resend Setup Checklist**: `docs/RESEND_CHECKLIST.md`
 - **Filament Docs**: https://filamentphp.com/docs/3.x
 - **Laravel Docs**: https://laravel.com/docs/11.x
 
@@ -227,8 +235,9 @@ php artisan serve --port=8002
 - [ ] Set `APP_ENV=production`
 - [ ] Set `APP_DEBUG=false`
 - [ ] Configure production database
-- [ ] Set up mail service
-- [ ] Configure `APP_URL`
+- [ ] Set up mail service (Resend API key)
+- [ ] Configure `APP_URL` (backend URL)
+- [ ] Verify domain in Resend dashboard
 - [ ] Run `composer install --optimize-autoloader --no-dev`
 - [ ] Run `php artisan config:cache`
 - [ ] Run `php artisan route:cache`
@@ -248,6 +257,11 @@ php artisan serve --port=8002
 - `GET /api/v1/jobs` - List jobs
 - `POST /api/v1/applications` - Submit application
 - `POST /api/v1/contact` - Submit inquiry
+
+### Password Setup (Web Routes)
+- `GET /set-password` - Show password setup form
+- `POST /set-password` - Process password setup
+- `GET /password-setup-success` - Success page
 
 ### Admin API (Requires Authentication)
 - `GET /api/v1/admin/applications` - List applications

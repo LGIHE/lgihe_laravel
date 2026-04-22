@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\ApplicationController;
 use App\Http\Controllers\Api\V1\AnalyticsController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\PasswordSetupController;
 use App\Http\Controllers\Api\V1\Admin\NewsAdminController;
 use App\Http\Controllers\Api\V1\Admin\ApplicationAdminController;
 use App\Http\Controllers\Api\V1\Admin\ContactInquiryAdminController;
@@ -47,6 +48,11 @@ Route::prefix('v1')->group(function () {
     
     // Authentication
     Route::post('auth/login', [AuthController::class, 'login']);
+    
+    // Password setup (public endpoints)
+    Route::post('password/verify-token', [PasswordSetupController::class, 'verifyToken']);
+    Route::post('password/setup', [PasswordSetupController::class, 'setupPassword']);
+    
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('auth/logout', [AuthController::class, 'logout']);
         Route::get('auth/me', [AuthController::class, 'me']);
