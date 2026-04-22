@@ -33,10 +33,10 @@ class CreateSuperAdmin extends Command
         $this->info('========================');
 
         // Get user details
-        $name = 'Caleb';
-        $email = 'c.nkunze@lgihe.org';
-        $password = 'Ultra@cank256';
-        $passwordConfirmation = 'Ultra@cank256';
+        $name = $this->ask('Enter full name');
+        $email = $this->ask('Enter email address');
+        $password = $this->secret('Enter password');
+        $passwordConfirmation = $this->secret('Confirm password');
 
         // Validate input
         $validator = Validator::make([
