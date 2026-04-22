@@ -80,6 +80,13 @@ class JobListingResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('location')
                             ->placeholder('e.g., Kampala, Uganda'),
+                        Forms\Components\TextInput::make('department')
+                            ->placeholder('e.g., Computer Science Department'),
+                        Forms\Components\TextInput::make('reports_to')
+                            ->placeholder('e.g., Head of Department'),
+                        Forms\Components\Textarea::make('supervises_who')
+                            ->placeholder('e.g., Teaching Assistants, Research Associates')
+                            ->rows(2),
                         Forms\Components\Select::make('employment_type')
                             ->options([
                                 'full-time' => 'Full-time',
@@ -95,6 +102,48 @@ class JobListingResource extends Resource
                             ->minDate(now()),
                     ])
                     ->columns(2),
+
+                Forms\Components\Section::make('Job Description Document')
+                    ->description('Upload a detailed job description document (PDF or Word)')
+                    ->schema([
+                        Forms\Components\FileUpload::make('document_path')
+                            ->label('Job Description Document')
+                            ->disk('public')
+                            ->directory('job-documents')
+                            ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                            ->maxSize(10240) // 10MB
+                            ->downloadable()
+                            ->previewable(false)
+                            ->helperText('Upload PDF or Word document (max 10MB)')
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    // Get file info
+                                    $file = $state;
+                                    if (is_string($file)) {
+                                        // File already uploaded, get info from storage
+                                        $fullPath = storage_path('app/public/' . $file);
+                                        if (file_exists($fullPath)) {
+                                            $set('document_name', basename($file));
+                                            $set('document_size', filesize($fullPath));
+                                            $set('document_type', mime_content_type($fullPath));
+                                        }
+                                    } elseif (is_object($file) && method_exists($file, 'getClientOriginalName')) {
+                                        // New file upload
+                                        $set('document_name', $file->getClientOriginalName());
+                                        $set('document_size', $file->getSize());
+                                        $set('document_type', $file->getMimeType());
+                                    }
+                                } else {
+                                    $set('document_name', null);
+                                    $set('document_size', null);
+                                    $set('document_type', null);
+                                }
+                            }),
+                        Forms\Components\Hidden::make('document_name'),
+                        Forms\Components\Hidden::make('document_size'),
+                        Forms\Components\Hidden::make('document_type'),
+                    ])
+                    ->collapsible(),
                 
                 Forms\Components\Section::make('Publishing')
                     ->schema([
@@ -125,15 +174,36 @@ class JobListingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('department')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('location')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('employment_type')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'full-time' => 'success',
+                        'part-time' => 'warning',
+                        'contract' => 'info',
+                        'temporary' => 'gray',
+                        default => 'gray',
+                    })
                     ->searchable(),
+                Tables\Columns\TextColumn::make('reports_to')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('salary_range')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\IconColumn::make('has_document')
+                    ->label('Document')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => !empty($record->document_path))
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('application_deadline')
                     ->date()
                     ->sortable(),
@@ -148,13 +218,12 @@ class JobListingResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('published_at')
                     ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_by')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('creator.name')
+                    ->label('Created By')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -163,15 +232,18 @@ class JobListingResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\Action::make('download_document')
+                    ->label('Download')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('info')
+                    ->visible(fn ($record) => !empty($record->document_path))
+                    ->url(fn ($record) => route('job-listing.download-document', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

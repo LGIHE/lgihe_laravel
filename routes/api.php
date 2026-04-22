@@ -24,6 +24,8 @@ Route::prefix('v1')->group(function () {
     
     Route::get('jobs', [JobListingController::class, 'index']);
     Route::get('jobs/{id}', [JobListingController::class, 'show']);
+    Route::get('jobs/{jobListing}/download-document', [JobListingController::class, 'downloadDocument'])
+        ->name('job-listing.download-document');
     
     Route::get('events', [EventController::class, 'index']);
     Route::get('events/{id}', [EventController::class, 'show']);
