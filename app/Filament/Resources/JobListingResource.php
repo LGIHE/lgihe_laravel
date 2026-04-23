@@ -179,7 +179,18 @@ class JobListingResource extends Resource
                             ->openable()
                             ->previewable(false)
                             ->helperText('Upload PDF or Word document (max 10MB)')
-                            ->visibility('public'),
+                            ->visibility('public')
+                            ->getUploadedFileNameForStorageUsing(function ($file, $get) {
+                                $title = $get('title') ?: 'job-listing';
+                                // Sanitize title for filename
+                                $sanitizedTitle = \Illuminate\Support\Str::slug($title);
+                                // Get current month and year
+                                $monthYear = now()->format('mY'); // e.g., 042026
+                                // Get original extension
+                                $extension = $file->getClientOriginalExtension();
+                                
+                                return "{$sanitizedTitle}_{$monthYear}.{$extension}";
+                            }),
                         Forms\Components\Hidden::make('document_name'),
                         Forms\Components\Hidden::make('document_size'),
                         Forms\Components\Hidden::make('document_type'),
