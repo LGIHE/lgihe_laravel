@@ -37,55 +37,31 @@ class CreateJobListing extends CreateRecord
             ->send();
     }
 
-    protected function getFormActions(): array
-    {
-        return [
-            $this->getCreateFormAction()
-                ->label('Save as Draft')
-                ->action(function () {
-                    $data = $this->form->getState();
-                    $data['status'] = 'draft';
-                    $data['published_at'] = null;
-                    
-                    // Handle document metadata
-                    $data = $this->handleDocumentMetadata($data);
-                    
-                    $this->data = $data;
-                    $this->create();
-                }),
-            
-            Actions\Action::make('publish')
-                ->label('Publish Now')
-                ->color('success')
-                ->icon('heroicon-o-check-circle')
-                ->requiresConfirmation()
-                ->modalHeading('Publish Job Listing')
-                ->modalDescription('Are you sure you want to publish this job listing? It will be immediately visible and accepting applications.')
-                ->modalSubmitActionLabel('Yes, Publish')
-                ->action(function () {
-                    $data = $this->form->getState();
-                    $data['status'] = 'active';
-                    $data['published_at'] = now();
-                    
-                    // Handle document metadata
-                    $data = $this->handleDocumentMetadata($data);
-                    
-                    $this->data = $data;
-                    $this->create();
-                }),
-        ];
-    }
-
     protected function handleDocumentMetadata(array $data): array
     {
         if (!empty($data['document_path'])) {
-            $filePath = $data['document_path'];
-            $fullPath = storage_path('app/public/' . $filePath);
-            
-            if (file_exists($fullPath)) {
-                $data['document_name'] = basename($filePath);
-                $data['document_size'] = filesize($fullPath);
-                $data['document_type'] = mime_content_type($fullPath);
+            try {
+                $filePath = $data['document_path'];
+                
+                // Check if it's a Livewire temporary file
+                if (is_object($filePath) && method_exists($filePath, 'getSize')) {
+                    // It's a Livewire TemporaryUploadedFile
+                    $data['document_name'] = $filePath->getClientOriginalName();
+                    $data['document_size'] = $filePath->getSize();
+                    $data['document_type'] = $filePath->getMimeType();
+                } else {
+                    // It's a file path string (already stored)
+                    $fullPath = storage_path('app/public/' . $filePath);
+                    
+                    if (file_exists($fullPath)) {
+                        $data['document_name'] = basename($filePath);
+                        $data['document_size'] = filesize($fullPath);
+                        $data['document_type'] = mime_content_type($fullPath);
+                    }
+                }
+            } catch (\Exception $e) {
+                // If there's any error getting metadata, just skip it
+                // The file will still be uploaded successfully
             }
         }
         
