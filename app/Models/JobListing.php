@@ -82,7 +82,7 @@ class JobListing extends Model
             ->where('published_at', '<=', now())
             ->where(function ($q) {
                 $q->whereNull('application_deadline')
-                    ->orWhere('application_deadline', '>=', now());
+                    ->orWhere('application_deadline', '>=', now()->toDateString());
             });
     }
 
