@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\AnalyticsController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\PasswordSetupController;
+use App\Http\Controllers\Api\V1\AbuseReportController;
 use App\Http\Controllers\Api\V1\Admin\NewsAdminController;
 use App\Http\Controllers\Api\V1\Admin\ApplicationAdminController;
 use App\Http\Controllers\Api\V1\Admin\ContactInquiryAdminController;
@@ -40,6 +41,7 @@ Route::prefix('v1')->group(function () {
     // Form submissions
     Route::post('contact', [ContactController::class, 'store']);
     Route::post('applications', [ApplicationController::class, 'store']);
+    Route::post('report-abuse', [AbuseReportController::class, 'store']);
     
     // Analytics endpoints
     Route::post('analytics/event', [AnalyticsController::class, 'storeEvent']);
