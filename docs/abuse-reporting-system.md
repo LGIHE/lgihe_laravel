@@ -242,7 +242,7 @@ Example: `ABR-1715234567890-ABC123XYZ`
 
 1. **Email Service Configuration**
    - Resend API key configured in environment variables
-   - Verified sender domain (`noreply@lgihe.org`)
+   - Verified sender domain (`noreply@lgihe.ac.ug`)
    - Safeguarding email address (`safeguarding@lgihe.ac.ug`) set up
 
 2. **Environment Variables**
@@ -268,7 +268,7 @@ curl -X POST https://api.resend.com/emails \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "from": "noreply@lgihe.org",
+    "from": "noreply@lgihe.ac.ug",
     "to": "test@example.com",
     "subject": "Test",
     "html": "<p>Test email</p>"
@@ -373,7 +373,7 @@ const transporter = nodemailer.createTransport({
 });
 
 await transporter.sendMail({
-  from: 'noreply@lgihe.org',
+  from: 'noreply@lgihe.ac.ug',
   to: 'safeguarding@lgihe.ac.ug',
   subject: `🚨 URGENT: Abuse Report [${reportId}]`,
   html: emailHtml,
@@ -387,7 +387,7 @@ import sgMail from '@sendgrid/mail';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 await sgMail.send({
-  from: 'noreply@lgihe.org',
+  from: 'noreply@lgihe.ac.ug',
   to: 'safeguarding@lgihe.ac.ug',
   subject: `🚨 URGENT: Abuse Report [${reportId}]`,
   html: emailHtml,
@@ -401,7 +401,7 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 const ses = new SESClient({ region: 'us-east-1' });
 
 await ses.send(new SendEmailCommand({
-  Source: 'noreply@lgihe.org',
+  Source: 'noreply@lgihe.ac.ug',
   Destination: { ToAddresses: ['safeguarding@lgihe.ac.ug'] },
   Message: {
     Subject: { Data: `🚨 URGENT: Abuse Report [${reportId}]` },

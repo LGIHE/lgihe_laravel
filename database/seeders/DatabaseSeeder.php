@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
 
         // Create admin user
         $admin = User::firstOrCreate(
-            ['email' => 'admin@lgihe.org'],
+            ['email' => 'admin@lgihe.ac.ug'],
             [
                 'name' => 'System Administrator',
                 'password' => Hash::make('password'),
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
 
         // Create content editor
         $editor = User::firstOrCreate(
-            ['email' => 'editor@lgihe.org'],
+            ['email' => 'editor@lgihe.ac.ug'],
             [
                 'name' => 'Content Editor',
                 'password' => Hash::make('password'),
@@ -123,7 +123,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->command->info('Database seeded successfully!');
-        $this->command->info('Admin credentials: admin@lgihe.org / password');
-        $this->command->info('Editor credentials: editor@lgihe.org / password');
+        $this->command->info('Admin credentials: admin@lgihe.ac.ug / password');
+        $this->command->info('Editor credentials: editor@lgihe.ac.ug / password');
     }
 }

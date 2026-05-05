@@ -27,7 +27,7 @@ Use this checklist to ensure the Resend email integration is properly configured
   ```env
   MAIL_MAILER=resend
   RESEND_API_KEY=re_your_actual_api_key_here
-  MAIL_FROM_ADDRESS="noreply@lgihe.org"
+  MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
   MAIL_FROM_NAME="LGIHE Backend"
   FRONTEND_URL=https://www.lgihe.ac.ug
   ```

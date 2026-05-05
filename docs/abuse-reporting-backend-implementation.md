@@ -215,7 +215,7 @@ $report->incident_type_display
 #### Email Recipients
 
 - **To**: `safeguarding@lgihe.ac.ug`
-- **From**: `LGIHE Safeguarding <noreply@lgihe.org>`
+- **From**: `LGIHE Safeguarding <noreply@lgihe.ac.ug>`
 - **Reply-To**: Reporter's email (if provided) or safeguarding email
 
 ---
@@ -286,7 +286,7 @@ MAIL_MAILER=resend
 RESEND_API_KEY=your_resend_api_key_here
 
 # Email Addresses
-MAIL_FROM_ADDRESS="noreply@lgihe.org"
+MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
 MAIL_FROM_NAME="LGIHE Safeguarding"
 ```
 

@@ -132,7 +132,7 @@ The backend for the LGIHE Abuse Reporting System has been successfully implement
 # Add to .env
 MAIL_MAILER=resend
 RESEND_API_KEY=your_resend_api_key_here
-MAIL_FROM_ADDRESS="noreply@lgihe.org"
+MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
 MAIL_FROM_NAME="LGIHE Safeguarding"
 ```
 
@@ -241,7 +241,7 @@ php artisan db:seed --class=AbuseReportSeeder
 ## 📧 Email Configuration
 
 ### Email Details
-- **From**: `LGIHE Safeguarding <noreply@lgihe.org>`
+- **From**: `LGIHE Safeguarding <noreply@lgihe.ac.ug>`
 - **To**: `safeguarding@lgihe.ac.ug`
 - **Reply-To**: Reporter's email (if provided) or safeguarding email
 - **Subject**: `🚨 URGENT: Abuse Report [REPORT-ID] - [INCIDENT-TYPE]`

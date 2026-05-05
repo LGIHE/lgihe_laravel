@@ -16,7 +16,7 @@ Open your `.env` file and update these lines:
 ```env
 MAIL_MAILER=resend
 RESEND_API_KEY=re_paste_your_key_here
-MAIL_FROM_ADDRESS="noreply@lgihe.org"
+MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
 MAIL_FROM_NAME="LGIHE Backend"
 ```
 
@@ -106,7 +106,7 @@ Before deploying to production:
    APP_DEBUG=false
    MAIL_MAILER=resend
    RESEND_API_KEY=re_production_key
-   MAIL_FROM_ADDRESS="noreply@lgihe.org"
+   MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
    APP_URL=https://api.lgihe.ac.ug
    ```
 

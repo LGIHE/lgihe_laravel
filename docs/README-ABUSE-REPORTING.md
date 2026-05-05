@@ -123,7 +123,7 @@ MAIL_MAILER=resend
 RESEND_API_KEY=your_resend_api_key_here
 
 # Email Addresses
-MAIL_FROM_ADDRESS="noreply@lgihe.org"
+MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
 MAIL_FROM_NAME="LGIHE Safeguarding"
 ```
 
@@ -228,7 +228,7 @@ Route::middleware('throttle:10,1')->group(function () {
 ## 📧 Email Configuration
 
 ### Email Details
-- **From**: `LGIHE Safeguarding <noreply@lgihe.org>`
+- **From**: `LGIHE Safeguarding <noreply@lgihe.ac.ug>`
 - **To**: `safeguarding@lgihe.ac.ug`
 - **Subject**: `🚨 URGENT: Abuse Report [REPORT-ID] - [INCIDENT-TYPE]`
 

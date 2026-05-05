@@ -119,7 +119,7 @@ const reportId = `ABR-${Date.now()}-${Math.random().toString(36).substr(2, 9).to
 ## Email Configuration
 
 ### Email Details
-- **From**: `LGIHE Safeguarding <noreply@lgihe.org>`
+- **From**: `LGIHE Safeguarding <noreply@lgihe.ac.ug>`
 - **To**: `safeguarding@lgihe.ac.ug`
 - **Reply-To**: Reporter's email (if provided) or `safeguarding@lgihe.ac.ug`
 - **Subject**: `🚨 URGENT: Abuse Report [REPORT-ID] - [INCIDENT-TYPE]`
@@ -251,7 +251,7 @@ fetch('/api/report-abuse', {
 import { resend } from '@/lib/resend';
 
 await resend.emails.send({
-  from: 'LGIHE Safeguarding <noreply@lgihe.org>',
+  from: 'LGIHE Safeguarding <noreply@lgihe.ac.ug>',
   to: 'safeguarding@lgihe.ac.ug',
   subject: `🚨 URGENT: Abuse Report [${reportId}]`,
   html: emailHtml,
@@ -272,7 +272,7 @@ const transporter = nodemailer.createTransport({
 });
 
 await transporter.sendMail({
-  from: 'noreply@lgihe.org',
+  from: 'noreply@lgihe.ac.ug',
   to: 'safeguarding@lgihe.ac.ug',
   subject: `🚨 URGENT: Abuse Report [${reportId}]`,
   html: emailHtml,
@@ -286,7 +286,7 @@ import sgMail from '@sendgrid/mail';
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 await sgMail.send({
-  from: 'noreply@lgihe.org',
+  from: 'noreply@lgihe.ac.ug',
   to: 'safeguarding@lgihe.ac.ug',
   subject: `🚨 URGENT: Abuse Report [${reportId}]`,
   html: emailHtml,

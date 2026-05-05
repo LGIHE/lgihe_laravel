@@ -5,7 +5,7 @@
 ### ✅ Environment Configuration
 
 - [ ] Set `RESEND_API_KEY` in `.env`
-- [ ] Set `MAIL_FROM_ADDRESS="noreply@lgihe.org"`
+- [ ] Set `MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"`
 - [ ] Set `MAIL_FROM_NAME="LGIHE Safeguarding"`
 - [ ] Set `MAIL_MAILER=resend`
 - [ ] Verify database connection settings
@@ -26,7 +26,7 @@
 - [ ] Test email delivery to `safeguarding@lgihe.ac.ug`
 - [ ] Confirm safeguarding email is monitored
 - [ ] Set up email forwarding if needed
-- [ ] Configure spam filters to allow emails from `noreply@lgihe.org`
+- [ ] Configure spam filters to allow emails from `noreply@lgihe.ac.ug`
 
 ### ✅ Queue Configuration
 
@@ -223,7 +223,7 @@ DB_PASSWORD=secure_password
 # Email
 MAIL_MAILER=resend
 RESEND_API_KEY=your_production_resend_key
-MAIL_FROM_ADDRESS="noreply@lgihe.org"
+MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
 MAIL_FROM_NAME="LGIHE Safeguarding"
 
 # Queue

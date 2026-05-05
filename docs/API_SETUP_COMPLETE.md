@@ -115,7 +115,7 @@ curl http://localhost:8001/api/v1/news
 # Test authentication
 curl -X POST http://localhost:8001/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@lgihe.org","password":"password"}'
+  -d '{"email":"admin@lgihe.ac.ug","password":"password"}'
 ```
 
 ### Test Results
@@ -239,7 +239,7 @@ The API currently has seeded data:
 - ✅ 2 News articles
 - ✅ 1 Event
 - ✅ 1 Job listing
-- ✅ 2 Users (admin@lgihe.org, editor@lgihe.org)
+- ✅ 2 Users (admin@lgihe.ac.ug, editor@lgihe.ac.ug)
 - ✅ Roles and permissions configured
 
 ## Authentication Flow
@@ -248,7 +248,7 @@ The API currently has seeded data:
 ```javascript
 POST /api/v1/auth/login
 {
-  "email": "admin@lgihe.org",
+  "email": "admin@lgihe.ac.ug",
   "password": "password"
 }
 
@@ -359,7 +359,7 @@ Authorization: Bearer {token}
 - **Browser Testing**: Open http://localhost:8001/api/v1/news
 
 ### Contact
-- **Email**: it@lgihe.org
+- **Email**: it@lgihe.ac.ug
 - **Issues**: Report via project repository
 
 ## Status

@@ -32,7 +32,7 @@ class AbuseReportSubmitted extends Mailable implements ShouldQueue
             : $this->report->reporter_email;
 
         return new Envelope(
-            from: new Address('noreply@lgihe.org', 'LGIHE Safeguarding'),
+            from: new Address('noreply@lgihe.ac.ug', 'LGIHE Safeguarding'),
             replyTo: [new Address($replyTo)],
             subject: "🚨 URGENT: Abuse Report [{$this->report->report_id}] - {$this->report->incident_type}",
         );

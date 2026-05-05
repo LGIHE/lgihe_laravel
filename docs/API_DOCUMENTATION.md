@@ -18,7 +18,7 @@ POST /api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@lgihe.org",
+  "email": "admin@lgihe.ac.ug",
   "password": "password"
 }
 ```
@@ -31,7 +31,7 @@ Content-Type: application/json
   "user": {
     "id": 1,
     "name": "System Administrator",
-    "email": "admin@lgihe.org",
+    "email": "admin@lgihe.ac.ug",
     "roles": ["Super Admin"],
     "permissions": [...]
   },
@@ -358,7 +358,7 @@ Authorization: Bearer {token}
 {
   "id": 1,
   "name": "System Administrator",
-  "email": "admin@lgihe.org",
+  "email": "admin@lgihe.ac.ug",
   "roles": ["Super Admin"],
   "permissions": ["manage-content", "manage-users", ...]
 }
@@ -564,7 +564,7 @@ curl http://localhost:8001/api/v1/news
 # Login
 curl -X POST http://localhost:8001/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@lgihe.org","password":"password"}'
+  -d '{"email":"admin@lgihe.ac.ug","password":"password"}'
 
 # Get authenticated user
 curl http://localhost:8001/api/v1/auth/me \
@@ -592,7 +592,7 @@ fetch('http://localhost:8001/api/v1/auth/login', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    email: 'admin@lgihe.org',
+    email: 'admin@lgihe.ac.ug',
     password: 'password'
   })
 })
@@ -658,7 +658,7 @@ export const login = (credentials) => api.post('/auth/login', credentials);
 ## Support
 
 For API support or questions:
-- **Email**: it@lgihe.org
+- **Email**: it@lgihe.ac.ug
 - **Documentation**: See project README
 - **Issues**: Report on GitHub
 

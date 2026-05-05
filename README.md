@@ -7,8 +7,8 @@ Modern Laravel 11 application with Filament v3 admin panel for the Lesotho Gover
 ### Access Admin Panel
 ```
 URL: http://localhost:8001/admin
-Super Admin: admin@lgihe.org / password
-Content Editor: editor@lgihe.org / password
+Super Admin: admin@lgihe.ac.ug / password
+Content Editor: editor@lgihe.ac.ug / password
 ```
 
 ### Start Server
@@ -210,7 +210,7 @@ lgihe-backend-filament/
 ### Can't login?
 ```bash
 php artisan db:seed
-# Use: admin@lgihe.org / password
+# Use: admin@lgihe.ac.ug / password
 ```
 
 ### Resources not showing?
@@ -283,7 +283,7 @@ Proprietary - Lesotho Government Institute of Higher Education
 
 ## 📞 Support
 
-- **Email**: it@lgihe.org
+- **Email**: it@lgihe.ac.ug
 - **Documentation**: See `/docs` folder
 - **Filament Discord**: https://filamentphp.com/discord
 

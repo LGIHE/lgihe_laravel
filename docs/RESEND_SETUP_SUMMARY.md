@@ -90,7 +90,7 @@
 ```env
 MAIL_MAILER=resend
 RESEND_API_KEY=re_your_api_key_here
-MAIL_FROM_ADDRESS="noreply@lgihe.org"
+MAIL_FROM_ADDRESS="noreply@lgihe.ac.ug"
 MAIL_FROM_NAME="LGIHE Backend"
 APP_URL=http://localhost:8000
 ```

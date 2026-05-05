@@ -78,10 +78,10 @@ QUEUE_CONNECTION=database
 MAIL_MAILER=smtp
 MAIL_HOST=mail.lgihe.org
 MAIL_PORT=465
-MAIL_USERNAME=noreply@lgihe.org
+MAIL_USERNAME=noreply@lgihe.ac.ug
 MAIL_PASSWORD=your_email_password
 MAIL_ENCRYPTION=ssl
-MAIL_FROM_ADDRESS=noreply@lgihe.org
+MAIL_FROM_ADDRESS=noreply@lgihe.ac.ug
 MAIL_FROM_NAME="${APP_NAME}"
 ```
 
@@ -131,7 +131,7 @@ Then in tinker:
 ```php
 $user = new App\Models\User();
 $user->name = 'Admin';
-$user->email = 'admin@lgihe.org';
+$user->email = 'admin@lgihe.ac.ug';
 $user->password = bcrypt('your-secure-password');
 $user->save();
 exit
