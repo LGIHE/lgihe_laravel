@@ -1,360 +1,190 @@
-# Deployment Checklist
+# Tender Functionality Deployment Checklist
 
-## Pre-Deployment Verification
+## Issue: Tenders menu not appearing and 403 error
 
-### ✅ Database Migrations
-- [x] Analytics tables updated with new schema
-- [x] All migrations run successfully
-- [x] Data preserved from old schema
+This happens when permissions are not properly seeded on the server.
 
-### ✅ Code Changes
-- [x] Events Resource updated with RichEditor and status dropdown
-- [x] News Resource updated with RichEditor and status dropdown
-- [x] Job Listings Resource updated with RichEditor and status dropdown
-- [x] Create pages updated with publish confirmation modal
-- [x] Analytics Controller updated to match API documentation
-- [x] Analytics Models updated with new fields
-- [x] Dashboard widgets created and registered
+## Deployment Steps (Run on Server)
 
-### ✅ API Endpoints
-- [x] POST /api/v1/analytics/event
-- [x] POST /api/v1/analytics/pageload
-- [x] POST /api/v1/analytics/error
-
----
-
-## Deployment Steps
-
-### 1. Backup Database
-```bash
-# For SQLite
-cp database/database.sqlite database/database.sqlite.backup
-
-# For MySQL/PostgreSQL
-# Use your database backup tool
-```
-
-### 2. Pull Latest Code
+### 1. Pull Latest Changes
 ```bash
 git pull origin main
 ```
 
-### 3. Install Dependencies
+### 2. Run Migrations
 ```bash
-composer install --no-dev --optimize-autoloader
+php artisan migrate
 ```
 
-### 4. Run Migrations
+### 3. **IMPORTANT: Seed Permissions**
 ```bash
-php artisan migrate --force
+php artisan db:seed --class=PermissionSeeder
 ```
 
-### 5. Clear Caches
+This will create the tender permissions and assign them to roles.
+
+### 4. Clear All Caches
 ```bash
-php artisan config:clear
 php artisan cache:clear
+php artisan config:clear
 php artisan route:clear
 php artisan view:clear
-php artisan optimize
+php artisan optimize:clear
 ```
 
-### 6. Set Permissions (if needed)
+### 5. Clear Permission Cache (Very Important!)
 ```bash
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
+php artisan permission:cache-reset
 ```
 
----
+This is crucial because Spatie Permission package caches permissions.
 
-## Post-Deployment Verification
-
-### Test Content Management
-
-#### Events
-- [ ] Create a new event
-- [ ] Use rich text editor formatting
-- [ ] Save as draft
-- [ ] Verify draft is not visible on frontend
-- [ ] Publish the event
-- [ ] Verify event appears on frontend
-- [ ] Check status badge colors
-
-#### News
-- [ ] Create a new article
-- [ ] Use rich text editor formatting
-- [ ] Save as draft
-- [ ] Publish the article
-- [ ] Verify article appears on frontend
-- [ ] Check status badge colors
-
-#### Job Listings
-- [ ] Create a new job listing
-- [ ] Use rich text editor formatting
-- [ ] Save as draft
-- [ ] Publish the job
-- [ ] Verify job appears on frontend
-- [ ] Check status badge colors
-
-### Test Analytics Integration
-
-#### Test Event Tracking
+### 6. Verify Permissions Exist
 ```bash
-curl -X POST https://your-domain.com/api/v1/analytics/event \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "page_view",
-    "properties": {"page": "/test"},
-    "timestamp": "2026-04-22T10:30:00.000Z",
-    "sessionId": "test_123"
-  }'
+php artisan tinker
 ```
-Expected: `{"success":true}`
 
-#### Test Page Load Tracking
-```bash
-curl -X POST https://your-domain.com/api/v1/analytics/pageload \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "/test",
-    "loadTime": 1500,
-    "timestamp": "2026-04-22T10:30:00.000Z",
-    "sessionId": "test_123"
-  }'
-```
-Expected: `{"success":true}`
-
-#### Test Error Logging
-```bash
-curl -X POST https://your-domain.com/api/v1/analytics/error \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "Test error",
-    "severity": "low",
-    "timestamp": "2026-04-22T10:30:00.000Z"
-  }'
-```
-Expected: `{"success":true}`
-
-### Verify Dashboard Widgets
-
-- [ ] Login to admin panel
-- [ ] Navigate to Dashboard
-- [ ] Verify "Analytics Overview" widget displays
-- [ ] Verify "Top Pages" widget displays
-- [ ] Verify "Traffic by Country" widget displays
-- [ ] Verify "Recent Errors" widget displays
-- [ ] Check that widgets show data (or "No data" if empty)
-
----
-
-## Frontend Integration
-
-### Next.js Configuration
-
-1. **Set Environment Variable**
-   ```bash
-   # .env.local or .env.production
-   NEXT_PUBLIC_API_URL=https://your-domain.com/api/v1
-   ```
-
-2. **Verify Analytics Tracking**
-   - [ ] Page views are being tracked
-   - [ ] Page load times are being recorded
-   - [ ] Errors are being logged
-   - [ ] Data appears in admin dashboard
-
-3. **Test Privacy Compliance**
-   - [ ] Analytics consent is respected
-   - [ ] Performance consent is respected
-   - [ ] Geolocation consent is respected
-   - [ ] Dashboard routes are not tracked
-
----
-
-## CORS Configuration
-
-If frontend and backend are on different domains:
-
-### Laravel CORS Setup
-
-1. **Update `config/cors.php`**:
-   ```php
-   'paths' => ['api/*', 'sanctum/csrf-cookie'],
-   'allowed_origins' => [
-       'https://your-frontend-domain.com',
-       'http://localhost:3000', // For development
-   ],
-   'allowed_methods' => ['*'],
-   'allowed_headers' => ['*'],
-   'exposed_headers' => [],
-   'max_age' => 0,
-   'supports_credentials' => false,
-   ```
-
-2. **Test CORS**:
-   ```bash
-   curl -H "Origin: https://your-frontend-domain.com" \
-        -H "Access-Control-Request-Method: POST" \
-        -H "Access-Control-Request-Headers: Content-Type" \
-        -X OPTIONS \
-        https://your-backend-domain.com/api/v1/analytics/event
-   ```
-
----
-
-## Security Checklist
-
-### Rate Limiting
-
-Add to `app/Http/Kernel.php`:
+Then run:
 ```php
-'api' => [
-    'throttle:60,1', // 60 requests per minute
-    \Illuminate\Routing\Middleware\SubstituteBindings::class,
-],
+\Spatie\Permission\Models\Permission::where('name', 'like', '%tender%')->get();
 ```
 
-Or create custom rate limit for analytics:
-```php
-// In RouteServiceProvider
-RateLimiter::for('analytics', function (Request $request) {
-    return Limit::perMinute(100)->by($request->ip());
-});
-```
+You should see:
+- view_tenders
+- create_tenders
+- update_tenders
+- delete_tenders
 
-### Environment Variables
-
-Ensure these are set in production:
+### 7. Verify Super Admin Has Permissions
 ```bash
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://your-domain.com
+php artisan tinker
 ```
 
-### SSL/HTTPS
+Then run:
+```php
+$superAdmin = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
+$superAdmin->permissions->pluck('name')->toArray();
+```
 
-- [ ] SSL certificate installed
-- [ ] HTTPS enforced
-- [ ] Mixed content warnings resolved
+This should include all tender permissions.
 
----
+### 8. Verify Your User Has Super Admin Role
+```bash
+php artisan tinker
+```
 
-## Monitoring
+Then run:
+```php
+$user = \App\Models\User::where('email', 'your-email@example.com')->first();
+$user->roles->pluck('name')->toArray();
+```
 
-### What to Monitor
+Should return: `["Super Admin"]`
 
-1. **Analytics Endpoint Health**
-   - Response times
-   - Error rates
-   - Request volume
+## Quick Fix Command (Run All at Once)
 
-2. **Database Performance**
-   - Query execution times
-   - Table sizes
-   - Index usage
+```bash
+php artisan migrate && \
+php artisan db:seed --class=PermissionSeeder && \
+php artisan permission:cache-reset && \
+php artisan cache:clear && \
+php artisan config:clear && \
+php artisan route:clear && \
+php artisan view:clear && \
+php artisan optimize:clear
+```
 
-3. **Storage Growth**
-   - Analytics tables size
-   - Growth rate
-   - Cleanup effectiveness
+## If Still Not Working
 
-### Set Up Alerts
-
-- [ ] Alert when error rate > 5%
-- [ ] Alert when response time > 2 seconds
-- [ ] Alert when disk usage > 80%
-- [ ] Alert when critical errors occur
-
----
-
-## Data Retention
-
-### Recommended Retention Policies
+### Option 1: Manually Assign Permissions to Super Admin
+```bash
+php artisan tinker
+```
 
 ```php
-// app/Console/Commands/CleanupAnalytics.php
-// Run daily via cron
-
-// Keep events for 90 days
-AnalyticsEvent::where('created_at', '<', now()->subDays(90))->delete();
-
-// Keep page loads for 90 days
-PageLoad::where('created_at', '<', now()->subDays(90))->delete();
-
-// Keep errors for 30 days (archive critical ones separately)
-AnalyticsError::where('created_at', '<', now()->subDays(30))
-    ->where('severity', '!=', 'critical')
-    ->delete();
+$superAdmin = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
+$tenderPermissions = \Spatie\Permission\Models\Permission::where('name', 'like', '%tender%')->get();
+$superAdmin->givePermissionTo($tenderPermissions);
+echo "Permissions assigned!";
 ```
 
-### Schedule in `app/Console/Kernel.php`:
+### Option 2: Re-sync All Permissions for Super Admin
+```bash
+php artisan tinker
+```
+
 ```php
-protected function schedule(Schedule $schedule)
-{
-    $schedule->command('analytics:cleanup')->daily();
-}
+$superAdmin = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
+$allPermissions = \Spatie\Permission\Models\Permission::all();
+$superAdmin->syncPermissions($allPermissions);
+echo "All permissions synced to Super Admin!";
 ```
 
----
+### Option 3: Clear Browser Cache
+Sometimes the issue is browser cache:
+- Hard refresh: `Ctrl + Shift + R` (Windows/Linux) or `Cmd + Shift + R` (Mac)
+- Or clear browser cache completely
 
-## Rollback Plan
+## Verification
 
-If issues occur after deployment:
+After running the commands, verify:
 
-### 1. Restore Database
+1. **Check if permissions exist:**
 ```bash
-# For SQLite
-cp database/database.sqlite.backup database/database.sqlite
-
-# For MySQL/PostgreSQL
-# Use your database restore tool
+php artisan tinker --execute="echo \Spatie\Permission\Models\Permission::where('name', 'like', '%tender%')->count();"
 ```
+Should return: `4`
 
-### 2. Revert Code
+2. **Check if Super Admin has tender permissions:**
 ```bash
-git revert HEAD
-# or
-git reset --hard <previous-commit-hash>
+php artisan tinker --execute="echo \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first()->hasPermissionTo('view_tenders') ? 'YES' : 'NO';"
 ```
+Should return: `YES`
 
-### 3. Clear Caches
+3. **Check if your user has Super Admin role:**
 ```bash
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+php artisan tinker --execute="echo \App\Models\User::find(1)->hasRole('Super Admin') ? 'YES' : 'NO';"
+```
+Should return: `YES`
+
+## Common Issues
+
+### Issue 1: Permission Cache Not Cleared
+**Solution:** Run `php artisan permission:cache-reset`
+
+### Issue 2: Config Cache Preventing New Routes
+**Solution:** Run `php artisan config:clear` and `php artisan route:clear`
+
+### Issue 3: Permissions Not Seeded
+**Solution:** Run `php artisan db:seed --class=PermissionSeeder`
+
+### Issue 4: Super Admin Role Doesn't Have New Permissions
+**Solution:** Re-run the PermissionSeeder or manually assign permissions
+
+### Issue 5: User Not Logged Out/In After Permission Changes
+**Solution:** Log out and log back in to refresh session
+
+## Production Environment Considerations
+
+If you're using a queue worker or supervisor:
+```bash
+php artisan queue:restart
+sudo supervisorctl restart all
 ```
 
----
+If you're using OPcache:
+```bash
+php artisan optimize:clear
+# Or restart PHP-FPM
+sudo systemctl restart php8.2-fpm
+```
 
-## Support Contacts
+## Final Check
 
-- **Technical Issues**: [IT Support Email]
-- **Content Questions**: [Content Team Email]
-- **Emergency**: [Emergency Contact]
+After all steps, try:
+1. Log out of Filament admin panel
+2. Clear browser cache
+3. Log back in
+4. Navigate to `/admin/tenders`
 
----
-
-## Documentation References
-
-- [Implementation Summary](./IMPLEMENTATION_SUMMARY.md)
-- [Content Editor Guide](./CONTENT_EDITOR_GUIDE.md)
-- [Analytics Integration](./ANALYTICS_INTEGRATION.md)
-- [Analytics Quick Reference](./ANALYTICS_QUICK_REFERENCE.md)
-
----
-
-## Sign-Off
-
-- [ ] Development Team Lead
-- [ ] QA Team Lead
-- [ ] System Administrator
-- [ ] Project Manager
-
-**Deployment Date**: _______________
-**Deployed By**: _______________
-**Verified By**: _______________
-
----
-
-**Last Updated**: April 22, 2026
+The Tenders menu should now appear in the sidebar and you should have full access.
