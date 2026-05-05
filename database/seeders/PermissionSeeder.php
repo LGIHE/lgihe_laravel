@@ -24,6 +24,7 @@ class PermissionSeeder extends Seeder
             'contact_inquiries' => ['view', 'create', 'update', 'delete'],
             'events' => ['view', 'create', 'update', 'delete'],
             'job_listings' => ['view', 'create', 'update', 'delete'],
+            'tenders' => ['view', 'create', 'update', 'delete'],
             'news' => ['view', 'create', 'update', 'delete'],
             'analytics' => ['view'],
         ];
@@ -92,6 +93,10 @@ class PermissionSeeder extends Seeder
             'create_job_listings',
             'update_job_listings',
             'delete_job_listings',
+            'view_tenders',
+            'create_tenders',
+            'update_tenders',
+            'delete_tenders',
             'view_news',
             'create_news',
             'update_news',

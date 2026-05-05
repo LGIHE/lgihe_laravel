@@ -34,6 +34,10 @@ Route::prefix('v1')->group(function () {
     
     Route::get('tenders', [TenderController::class, 'index']);
     Route::get('tenders/{id}', [TenderController::class, 'show']);
+    Route::get('tenders/{tender}/download-rfp', [TenderController::class, 'downloadRfpDocument'])
+        ->name('tender.download-rfp');
+    Route::get('tenders/{tender}/download-tor', [TenderController::class, 'downloadTorDocument'])
+        ->name('tender.download-tor');
     
     Route::get('research', [ResearchController::class, 'index']);
     Route::get('research/{id}', [ResearchController::class, 'show']);
