@@ -53,13 +53,8 @@ class RoleResource extends Resource
                             ->label('Select Permissions')
                             ->helperText('Choose what actions this role can perform')
                             ->options(function () {
-                                return Permission::all()->groupBy(function ($permission) {
-                                    // Group by resource (e.g., "view_users" -> "Users")
-                                    $parts = explode('_', $permission->name);
-                                    return count($parts) > 1 ? ucfirst($parts[1]) : 'Other';
-                                })->map(function ($group) {
-                                    return $group->pluck('name', 'id');
-                                })->flatten();
+                                // Simply return all permissions as id => name pairs
+                                return Permission::all()->pluck('name', 'id');
                             })
                             ->descriptions(function () {
                                 return Permission::all()->mapWithKeys(function ($permission) {
