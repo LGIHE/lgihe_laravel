@@ -39,10 +39,10 @@ class CreateEvent extends CreateRecord
         return [
             $this->getCreateFormAction()
                 ->label('Save as Draft')
-                ->action(function (array $data) {
+                ->mutateFormDataUsing(function (array $data): array {
                     $data['status'] = 'draft';
                     $data['published_at'] = null;
-                    $this->create($data);
+                    return $data;
                 }),
             
             Actions\Action::make('publish')
@@ -53,11 +53,12 @@ class CreateEvent extends CreateRecord
                 ->modalHeading('Publish Event')
                 ->modalDescription('Are you sure you want to publish this event? It will be immediately visible to the public.')
                 ->modalSubmitActionLabel('Yes, Publish')
-                ->action(function (array $data) {
+                ->mutateFormDataUsing(function (array $data): array {
                     $data['status'] = 'published';
                     $data['published_at'] = now();
-                    $this->create($data);
-                }),
+                    return $data;
+                })
+                ->action('create'),
         ];
     }
 }
