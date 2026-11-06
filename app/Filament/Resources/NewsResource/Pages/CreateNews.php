@@ -39,10 +39,10 @@ class CreateNews extends CreateRecord
         return [
             $this->getCreateFormAction()
                 ->label('Save as Draft')
-                ->action(function (array $data) {
+                ->mutateFormDataUsing(function (array $data) {
                     $data['status'] = 'draft';
                     $data['published_at'] = null;
-                    $this->create($data);
+                    return $data;
                 }),
             
             Actions\Action::make('publish')
@@ -53,11 +53,12 @@ class CreateNews extends CreateRecord
                 ->modalHeading('Publish Article')
                 ->modalDescription('Are you sure you want to publish this article? It will be immediately visible to the public.')
                 ->modalSubmitActionLabel('Yes, Publish')
-                ->action(function (array $data) {
+                ->mutateFormDataUsing(function (array $data) {
                     $data['status'] = 'published';
                     $data['published_at'] = now();
-                    $this->create($data);
-                }),
+                    return $data;
+                })
+                ->action('create'),
         ];
     }
 }
