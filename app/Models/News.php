@@ -16,6 +16,7 @@ class News extends Model
         'excerpt',
         'content',
         'featured_image',
+        'images',
         'category',
         'status',
         'published_at',
@@ -25,6 +26,7 @@ class News extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
+        'images' => 'array',
     ];
 
     public function creator(): BelongsTo

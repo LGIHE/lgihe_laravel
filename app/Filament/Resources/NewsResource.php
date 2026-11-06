@@ -72,9 +72,21 @@ class NewsResource extends Resource
                 Forms\Components\Section::make('Media')
                     ->schema([
                         Forms\Components\FileUpload::make('featured_image')
+                            ->label('Featured Image')
                             ->image()
                             ->imageEditor()
-                            ->directory('news'),
+                            ->directory('news')
+                            ->helperText('This will be the main image displayed for the article.'),
+                        Forms\Components\FileUpload::make('images')
+                            ->label('Additional Images')
+                            ->image()
+                            ->imageEditor()
+                            ->multiple()
+                            ->reorderable()
+                            ->maxFiles(10)
+                            ->directory('news')
+                            ->helperText('Add up to 10 additional images for your article.')
+                            ->columnSpanFull(),
                     ]),
                 
                 Forms\Components\Section::make('Publishing')
